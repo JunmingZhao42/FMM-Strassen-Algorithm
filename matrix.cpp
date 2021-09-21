@@ -2,7 +2,7 @@
 // Supervisor: Professor Linda Stals
 // Student : u6633756 Junming Zhao
 
-// Matrix.cpp - implementation of matrix helper functions (including strassen algorithm)
+// matrix.cpp - implementation of matrix helper functions (including strassen algorithm)
 
 #include <iostream>
 #include <vector>
@@ -200,6 +200,8 @@ vector<vector <int>> Strassen(int m, int n, int p,
     }
     // otherwise apply Strassen algorithm recursively
     else {
+        // 1. deal with odd dimension
+        // if ()
         // 1. Get submatrix
         vector<vector <int>> A11 = Matrix_Slice(0, m/2, 0, n/2, A);
         vector<vector <int>> A12 = Matrix_Slice(0, m/2, n/2, n, A);
@@ -214,7 +216,7 @@ vector<vector <int>> Strassen(int m, int n, int p,
 
         // 2. Calculate intermediate result
         // TODO: optimize the memory allocations
-        
+
         // P1 = (A11 + A22) × (B11 + B22)
         vector<vector <int>> P1 = Strassen(m/2, n/2, p/2, Matrix_Add(m/2, n/2, A11, A22), Matrix_Add(n/2, p/2, B11, B22));
 
