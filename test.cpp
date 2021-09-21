@@ -15,9 +15,9 @@ vector<vector <int> > Matrix_Slice(int m1, int m2, int n1, int n2, vector<vector
 
 int main(){
     int m = 4;
-    int n = 5;
+    int n = 6;
     vector<vector <int> > A1 = {{1,2,3,4,5,6}, {4,5,6,7,8,9}, {1,3,4,6,8,0}, {0,5,7,8,1,2}};
-    vector<vector <int> > A2 = Matrix_Slice(m/2, m, n/2, n, A1);
+    vector<vector <int> > A2 = Matrix_Slice(0, m, 0, n-1, A1);
 
 
     // A2.reserve(2);
