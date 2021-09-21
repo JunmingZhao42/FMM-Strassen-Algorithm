@@ -1,3 +1,10 @@
+/** 
+ * MATH3512 Matrix Computations, The Australian National University
+ * Supervisor : Professor Linda Stals
+ * Student    : u6633756 Junming Zhao
+ * test.cpp   : examples and tests of BLAS operation (a) and (d) implemented.
+**/
+
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -24,7 +31,6 @@ int main(){
 
     for (unsigned int i=0; i<A2.size(); i++){
         for (unsigned int j=0; j<A2[i].size(); j++){
-            // cout << A1[i][j] << " ";
             cout << A2[i][j] << " ";
         }
         cout << endl;

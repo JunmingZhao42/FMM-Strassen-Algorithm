@@ -13,4 +13,10 @@ Reference for the algorithm:
 NICHOLAS J. HIGHAM. _Exploiting Fast Matrix Multiplication_
 
 
-# User guide
+# TODO:
+1. structure the code with headers and proper comments
+2. implement BLAS3D
+3. implement error handling
+4. generalise matrix entry type
+5. optimise code memory allocation and complexity with pointers
+6. create testing

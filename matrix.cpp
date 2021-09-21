@@ -1,16 +1,18 @@
-// MATH3512 Matrix Computations, The Australian National University
-// Supervisor: Professor Linda Stals
-// Student : u6633756 Junming Zhao
+#ifndef __MATRIX_H__
+#define __MATRIX_H__
 
-// matrix.cpp - implementation of matrix helper functions (including strassen algorithm)
+/** 
+ * MATH3512 Matrix Computations, The Australian National University
+ * Supervisor : Professor Linda Stals
+ * Student    : u6633756 Junming Zhao
+ * matrix.cpp - implementation of matrix helper functions (including strassen algorithm)
+**/
+
 #include <iostream>
 #include <vector>
 using namespace std;
 
 
-/** ------ Definition Section ------ **/
-
-/** ------ Implementation Section ------ **/
 // TODO:
 // 1. generalise the function input as type T
 // 2. implement error handling
@@ -491,3 +493,5 @@ vector<T> SimpleMatrix<T>::Column( int col, int rowBegin, int rowEnd ) const
         return StridedSlice( Index(rowBegin,col), rowBegin-rowEnd+1, -m_cols );
 }
 */
+
+#endif // __MATRIX_H__
