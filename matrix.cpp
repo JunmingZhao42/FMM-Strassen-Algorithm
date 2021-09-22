@@ -1,6 +1,3 @@
-#ifndef __MATRIX_H__
-#define __MATRIX_H__
-
 /** 
  * MATH3512 Matrix Computations, The Australian National University
  * Supervisor : Professor Linda Stals
@@ -412,6 +409,3 @@ int main() {
 
     return 0;
 }
-
-
-#endif // __MATRIX_H__
