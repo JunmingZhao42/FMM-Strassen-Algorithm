@@ -11,3 +11,5 @@ Some Questions:
 1. `vector` object in C++ is not the most efficient way. Should use `[][]` and pointer instead?
 2. Memory handling for the intermediate matrices. Have a global variable of fix size instead of creating new one each time?
 3. Should we use generic matrix entry type in this project?
+4. threading to improve strassen algorithm ...
+5. get column, can do without looping? (complexity spend on looping - same as flop?)

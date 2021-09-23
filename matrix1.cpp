@@ -9,14 +9,17 @@
 
 // ---- constructors ----
 /**
- * @brief Construct a new zero matrix
+ * @brief Construct a new mxn matrix
  * 
  * @param m number of rows
  * @param n number of cols
  */
-Matrix::Matrix(int m, int n) : m_rows(m), n_cols(n)
+Matrix::Matrix(int m, int n) : 
+m_rows(m), n_cols(n)
 {
     alloc_space();
+
+    // TODO: this doesn't have to assign 0s
     for (int i=0; i<m; i++){
         for (int j=0; j<n; j++){
             data[i][j] = 0;
@@ -31,7 +34,8 @@ Matrix::Matrix(int m, int n) : m_rows(m), n_cols(n)
  * 
  * @param matrix 
  */
-Matrix::Matrix(const Matrix& matrix) : m_rows(matrix.m_rows), n_cols(matrix.n_cols) 
+Matrix::Matrix(const Matrix& matrix) : 
+m_rows(matrix.m_rows), n_cols(matrix.n_cols) 
 {
     alloc_space();
     for (int i=0; i<m_rows; i++){
@@ -42,6 +46,17 @@ Matrix::Matrix(const Matrix& matrix) : m_rows(matrix.m_rows), n_cols(matrix.n_co
 }
 
 
+/**
+ * @brief Construct a new Matrix:: Matrix object
+ * data referes to the input refd
+ * @param m 
+ * @param n 
+ * @param data 
+ */
+Matrix::Matrix(int m, int n, double** refd) : 
+m_rows(m), n_cols(n), data(refd) {}
+
+
 // ---- destructor ----
 /**
  * @brief Destroy the Matrix:: Matrix object
@@ -49,9 +64,13 @@ Matrix::Matrix(const Matrix& matrix) : m_rows(matrix.m_rows), n_cols(matrix.n_co
  */
 Matrix::~Matrix() 
 {
-    for (int i=0; i<m_rows; i++){
-        delete[] data[i];
+    if (!is_submatrix){
+        std::cout << "delete row" << std::endl;
+        for (int i=0; i<m_rows; i++){
+            delete[] data[i];
+        }
     }
+    std::cout << "delete data" << std::endl;
     delete[] data;
 }
 
@@ -102,7 +121,6 @@ Matrix& Matrix::operator+=(const Matrix& matrix)
 {
     if ((m_rows != matrix.m_rows) || (n_cols != matrix.n_cols)){
         throw std::invalid_argument("dimensions not matching for matrix addition");
-        return;
     }
 
     for (int i=0; i<m_rows; i++){
@@ -124,7 +142,6 @@ Matrix& Matrix::operator-=(const Matrix& matrix)
 {
     if ((m_rows != matrix.m_rows) || (n_cols != matrix.n_cols)){
         throw std::invalid_argument("dimensions not matching for matrix subraction");
-        return;
     }
 
     for (int i=0; i<m_rows; i++){
@@ -146,7 +163,6 @@ Matrix& Matrix::operator*=(const Matrix& matrix)
 {
     if (n_cols != matrix.m_rows){
         throw std::invalid_argument("dimensions not matching for matrix multiplication");
-        return;
     }
 
     Matrix result(m_rows, matrix.n_cols);
@@ -174,6 +190,7 @@ Matrix& Matrix::operator*=(double alpha)
             data[i][j] *= alpha;
         }
     }
+    return *this;
 }
 
 
@@ -195,23 +212,28 @@ Matrix Matrix::transpose()
 
 
 /**
- * @brief Get a submatrix = Matrix[m1:m2][n1:n2]
- * excluding row m2 and col n2
+ * @brief Get a pointer submatrix = Matrix[m1:m1+m][n1:n1+n]
+ * excluding row (m1+m) and col (n1+n)
  * 
- * @param m1 
- * @param m2 
- * @param n1 
- * @param n2 
+ * @param m  number of rows
+ * @param m1 row starting point
+ * @param n  number of cols
+ * @param n2 col starting point
  * @return Matrix
  */
-Matrix Matrix::slice(int m1, int m2, int n1, int n2) 
+Matrix Matrix::slice(int m, int m1, int n, int n1) 
 {
-    Matrix result(m2-m1, n2-n1);
-    for (int i=0; i<result.m_rows; i++){
-        for (int j=0; j<result.n_cols; j++){
-            result.data[i][j] = data[i+m1][j+m2];
-        }
+    if ((m+m1 > m_rows) || (n+n1 > n_cols)){
+        throw std::invalid_argument("submatrix index out of the original one");
     }
+
+    double ** sub_data = new double*[m];
+
+    for(int i=0; i<m; i++){
+        sub_data[i] = data[i+m1]+n1;
+    }
+    Matrix result(m, n, sub_data);
+    result.is_submatrix = true;
     return result;
 }
 
@@ -224,7 +246,7 @@ void Matrix::assign_random()
 {
     for (int i=0; i<m_rows; i++){
         for (int j=0; j<n_cols; j++){
-            data[i][j] = rand() % 5;
+            data[i][j] = (i+1)*(j+1);
         }
     }
 }
@@ -242,6 +264,7 @@ void Matrix::print_matrix()
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
 
@@ -289,4 +312,36 @@ Matrix operator*(const Matrix& matrix, double alpha)
 
 Matrix operator*(double alpha, const Matrix& matrix){
     return (matrix * alpha);
+}
+
+
+
+Matrix strassen(Matrix A, Matrix B){
+    int m = A.m_rows;
+    int n = A.n_cols;
+    int p = B.n_cols;
+
+    if (n!= B.m_rows){
+        std::invalid_argument("dimensions not matching for matrix multiplication");
+    }
+
+    int m2 = m/2;
+    int n2 = n/2;
+    int p2 = p/2;
+
+    // assign temp variables
+    Matrix P1(m2,p2);
+    Matrix P2(m2,p2);
+    Matrix P3(m2,p2);
+    Matrix P4(m2,p2);
+    Matrix P5(m2,p2);
+    Matrix P6(m2,p2);
+    Matrix P7(m2,p2);
+
+    // get submatrix
+    Matrix A11(m2,n2,A.data);
+    Matrix A12(m2,n2,A.data);
+    
+
+    
 }
