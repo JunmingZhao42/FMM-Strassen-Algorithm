@@ -535,12 +535,11 @@ vector : 1xm
 matrix : mxn
 result : 1xn
 **/
-double* vector_matrix_mul(double* v, Matrix A){
-    double * result = new double[A.n_cols];
+double* vector_matrix_mul(double* v, Matrix A, double * & v_out){
     for (int i=0; i<A.n_cols; i++){
-        result[i] = inner_product(A.m_rows, v, A.get_column(i));
+        v_out[i] = inner_product(A.m_rows, v, A.get_column(i));
     }
-    return result;
+    return v_out;
 }
 
 
@@ -558,6 +557,13 @@ double* matrix_vector_mul(Matrix A, double* v){
 }
 
 
+/**
+ * @brief Strassen algorithm
+ * 
+ * @param A 
+ * @param B 
+ * @return Matrix 
+ */
 Matrix strassen(Matrix A, Matrix B){
     int m = A.m_rows;
     int n = A.n_cols;
@@ -624,26 +630,28 @@ Matrix strassen(Matrix A, Matrix B){
     
 
     // 5. deal with odd dimensions
-    // TODO: pass C pointer
     if (m2*2 < m){
-        // A has odd number of rows
+        // m is odd
         // fill last row of C
-        C.data[m-1] = vector_matrix_mul(A.data[m-1], B.slice(n,0,2*p2,0));
+        vector_matrix_mul(A.data[m-1], B.slice(n,0,2*p2,0), C.data[m-1]);
     }
+
     if (p2*2 < p){
-        double * s2 = matrix_vector_mul(A, B.get_column(p-1));
+        // p is odd
         // fill last col of C
+        double * v = B.get_column(p-1);
         for (int i=0; i<m; i++){
             // std::cout << s2[i] << std::endl;
-            C.data[i][p-1] = s2[i];
+            C.data[i][p-1] = inner_product(A.n_cols, A.data[i], v);
         }
-        delete[] s2;
+        delete[] v;
     }
+
     if (n2*2 < n){
         // n is odd
+        // add entries to A1 x B1
         for (int i=0; i<m2*2; i++){
             for (int j=0; j<p2*2; j++){
-                // add entries to A1 x B1
                 C.data[i][j] += A.data[i][n-1]*B.data[n-1][j];
             }
         }
