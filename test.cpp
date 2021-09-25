@@ -16,16 +16,16 @@ int main(){
 
     Matrix matrix1 = Matrix(m, m);
     matrix1.assign_random();
-    matrix1.print_matrix();
+    matrix1.print();
 
     Matrix matrix2 = Matrix(m, m);
     matrix2.assign_random();
-    matrix2.print_matrix();
+    matrix2.print();
 
     Matrix matrix3 = strassen(matrix1, matrix2);
-    matrix3.print_matrix();
+    matrix3.print();
 
     Matrix matrix4 = matrix1 * matrix2;
-    matrix4.print_matrix();
+    matrix4.print();
     return 0;
 }

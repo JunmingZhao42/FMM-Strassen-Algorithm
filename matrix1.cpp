@@ -254,7 +254,7 @@ void Matrix::assign_random()
  * @brief print out matrix data
  * 
  */
-void Matrix::print_matrix() 
+void Matrix::print() 
 {
     for (int i=0; i<m_rows; i++){
         for (int j=0; j<n_cols; j++){
@@ -277,6 +277,81 @@ void Matrix::alloc_space()
         data[i] = new double[n_cols];
     }
 }
+
+
+/**
+ * @brief Construct a new Vector:: Vector object
+ * 
+ * @param n 
+ */
+Vector::Vector(int n) : n_len(n)
+{
+    alloc_space();
+    for (int i=0; i<n; i++){
+        data[i] = 0;
+    }
+}
+
+
+/**
+ * @brief Construct a new Vector:: Vector object
+ * 
+ * @param n 
+ * @param refd 
+ */
+Vector::Vector(int n, double * refd) : 
+n_len(n), data(refd)
+{}
+
+
+/**
+ * @brief Destroy the Vector:: Vector object
+ * 
+ */
+Vector::~Vector() 
+{
+    delete[] data;
+}
+
+
+/**
+ * @brief assign random value to the vector
+ * 
+ */
+void Vector::assign_random() 
+{
+    for (int i=0; i<n_len; i++){
+        data[i] = (i+1);
+    }
+}
+
+
+/**
+ * @brief print out the vector horizontally
+ * 
+ */
+void Vector::print() 
+{
+    for (int i=0; i<n_len; i++){
+       std::cout << data[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+
+/**
+ * @brief allocate data space to the pointer
+ * 
+ */
+void Vector::alloc_space() 
+{
+    data = new double[n_len];
+}
+
+
+
+
+
 
 
 // ---- public static function implementations ----

@@ -28,13 +28,32 @@ class Matrix{
         // inline int get_n_cols() {return n_cols;}
         inline double operator()(int i, int j) {return data[i][j];}
         void assign_random();
-        void print_matrix();
+        void print();
 
         int m_rows;
         int n_cols;
         double ** data;
         void alloc_space();
         bool is_submatrix = false;
+};
+
+
+class Vector{
+    public:
+        // constructors
+        Vector(int n);
+        Vector(int n, double * refd);
+
+        // destructor
+        ~Vector();
+
+        // helper function
+        inline double operator()(int i) {return data[i];}
+        void assign_random();
+        void print();
+        void alloc_space();
+        int n_len;
+        double * data;
 };
 
 
