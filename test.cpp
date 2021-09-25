@@ -11,25 +11,21 @@
 
 
 int main(){
-    int m = 6;
+    int m = 4;
     int n = 7;
-    
-    Matrix matrix1 = Matrix(m, n);
+
+    Matrix matrix1 = Matrix(m, m);
     matrix1.assign_random();
     matrix1.print_matrix();
 
-    Matrix matrix2 = matrix1.slice(1, 4, 3, 0);
-    // double ** subdata = new double*[3];
-    
-    // for(int i=0; i<3; i++){
-    //     std::cout << matrix1.data[i] << std::endl;
-    //     subdata[i] = matrix1.data[i];
-    // }
-
+    Matrix matrix2 = Matrix(m, m);
+    matrix2.assign_random();
     matrix2.print_matrix();
 
-    //Matrix matrix3 = matrix1 + matrix2;
-    //matrix3.print_matrix();
+    Matrix matrix3 = strassen(matrix1, matrix2);
+    matrix3.print_matrix();
 
+    Matrix matrix4 = matrix1 * matrix2;
+    matrix4.print_matrix();
     return 0;
 }

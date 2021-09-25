@@ -300,7 +300,7 @@ vector<vector <int> > Strassen(int m, int n, int p,
         // P3 = A11 × (B12 - B22)
         vector<vector <int> > P3 = Strassen(m2, n2, p2, A11, Matrix_Sub(n2, p2, B12, B22));
 
-        // P4 = A22 × (B21 - B22)
+        // P4 = A22 × (B21 - B11)
         vector<vector <int> > P4 = Strassen(m2, n2, p2, A22, Matrix_Sub(n2, p2, B21, B11));
 
         // P5 = (A11 + A12) × B22

@@ -65,12 +65,10 @@ m_rows(m), n_cols(n), data(refd) {}
 Matrix::~Matrix() 
 {
     if (!is_submatrix){
-        std::cout << "delete row" << std::endl;
         for (int i=0; i<m_rows; i++){
             delete[] data[i];
         }
     }
-    std::cout << "delete data" << std::endl;
     delete[] data;
 }
 
@@ -325,23 +323,61 @@ Matrix strassen(Matrix A, Matrix B){
         std::invalid_argument("dimensions not matching for matrix multiplication");
     }
 
+    if (m <= 2 || n <= 2 || p <= 2){
+        // std::cout << "base case of recursion" << std::endl;
+        return (A*B);
+    }
+
     int m2 = m/2;
     int n2 = n/2;
     int p2 = p/2;
 
     // assign temp variables
-    Matrix P1(m2,p2);
-    Matrix P2(m2,p2);
-    Matrix P3(m2,p2);
-    Matrix P4(m2,p2);
-    Matrix P5(m2,p2);
-    Matrix P6(m2,p2);
-    Matrix P7(m2,p2);
 
     // get submatrix
-    Matrix A11(m2,n2,A.data);
-    Matrix A12(m2,n2,A.data);
+    Matrix A11 = A.slice(m2,0,n2,0);
+    Matrix A12 = A.slice(m2,0,n2,n2);
+    Matrix A21 = A.slice(m2,m2,n2,0);
+    Matrix A22 = A.slice(m2,m2,n2,n2);
+
+    Matrix B11 = B.slice(n2,0,p2,0);
+    Matrix B12 = B.slice(n2,0,p2,p2);
+    Matrix B21 = B.slice(n2,n2,p2,0);
+    Matrix B22 = B.slice(n2,n2,p2,p2);
+
+
+    // calculate intermediate result
+    Matrix P1 = strassen((A11 + A22),(B11 + B22));
+    Matrix P2 = strassen((A21 + A22), B11);
+    Matrix P3 = strassen(A11, (B12 - B22));
+    Matrix P4 = strassen(A22, (B21 - B11));
+    Matrix P5 = strassen((A11 + A12), B22);
+    Matrix P6 = strassen((A21 - A11), (B11 + B12));
+    Matrix P7 = strassen((A12 - A22), (B21 + B22));
+
+    // compse to get result C
+    Matrix C(m,p);
+    Matrix C11 = C.slice(m2,0,p2,0);
+    Matrix C12 = C.slice(m2,0,p2,p2);
+    Matrix C21 = C.slice(m2,m2,p2,0);
+    Matrix C22 = C.slice(m2,m2,p2,p2);
+
+    C11 += P1;
+    C11 += P4;
+    C11 -= P5;
+    C11 += P7;
+
+    C12 += P3;
+    C12 += P5;
+
+    C21 += P2;
+    C21 += P4;
+
+    C22 += P1;
+    C22 += P3;
+    C22 -= P2;
+    C22 += P6;
     
 
-    
+    return C;
 }
