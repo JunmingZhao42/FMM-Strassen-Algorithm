@@ -2,7 +2,8 @@
  * MATH3512 Matrix Computations, The Australian National University
  * Supervisor : Professor Linda Stals
  * Student    : u6633756 Junming Zhao
- * matrix.cpp - implementation of matrix helper functions (including strassen algorithm)
+ * matrix2.cpp - project start-up template - implementation of matrix helper functions 
+ *              (including strassen algorithm) using <vector> object from C++ standard library
 **/
 
 #include <iostream>
