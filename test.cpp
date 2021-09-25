@@ -6,7 +6,7 @@
 **/
 
 
-#include "matrix1.h"
+#include "matrix.hpp"
 #include <iostream>
 
 
