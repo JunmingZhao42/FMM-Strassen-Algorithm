@@ -11,7 +11,7 @@ class Vector{
         Vector& operator=(const Vector&);
         Vector& operator+=(const Vector&);
         Vector& operator-=(const Vector&);
-        Vector& operator*=(double);
+        Vector& operator*=(double alpha);
 
         // other vector opersations
         double inner_product(const Vector&);
@@ -55,8 +55,9 @@ class Matrix{
         inline double operator()(int i, int j) {return data[i][j];}
         void assign_random();
         void print();
-        Vector get_row(int i);
-        Vector get_column(int j);
+        // Vector get_row(int i);
+        // Vector get_column(int j);
+        double* get_column(int j);
 
         int m_rows;
         int n_cols;
@@ -82,3 +83,9 @@ Matrix strassen(Matrix A, Matrix B);
 // methods for vector and matrix
 Matrix operator*(const Matrix&, const Vector&);
 Matrix operator*(const Vector&, const Matrix&);
+Matrix outer_product(const Vector&, const Vector&);
+
+
+double inner_product(int n, double* v1, double* v2);
+double* vector_matrix_mul(double* v, Matrix A);
+double* matrix_vector_mul(Matrix A, double* v);

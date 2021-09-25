@@ -267,6 +267,21 @@ void Matrix::print()
 
 
 /**
+ * @brief Get the column object
+ * 
+ * @param j 
+ * @return double* 
+ */
+double* Matrix::get_column(int j){
+    double* result = new double[m_rows];
+    for (int i=0; i<m_rows; i++){
+        result[i] = data[i][j];
+    }
+    return result;
+}
+
+
+/**
  * @brief allocate double array space by m_rows and n_cols
  * 
  */
@@ -314,6 +329,125 @@ n_len(n), data(refd)
 Vector::~Vector() 
 {
     delete[] data;
+}
+
+
+/**
+ * @brief 
+ * 
+ * @param vector 
+ * @return Vector& 
+ */
+Vector& Vector::operator=(const Vector& vector) 
+{
+    if (this == &vector){
+        return *this;
+    }
+
+    // if dimension different, destroy original data
+    if (n_len != vector.n_len){
+        delete [] data;
+        n_len = vector.n_len;
+        alloc_space();
+    }
+
+    // copy data
+    for (int i=0; i<n_len; i++){
+        data[i] = vector.data[i];
+    }
+
+    return *this;
+}
+
+
+/**
+ * @brief Vector addition
+ * 
+ * @return Vector& 
+ */
+Vector& Vector::operator+=(const Vector& vector) 
+{
+    if (n_len != vector.n_len){
+        throw std::invalid_argument("dimensions not matching for vector addition");
+    }
+
+    for (int i=0; i<n_len; i++){
+        data[i] += vector.data[i];
+    }
+    return *this;
+}
+
+
+/**
+ * @brief Vector subtraction
+ * 
+ * @return Vector& 
+ */
+Vector& Vector::operator-=(const Vector& vector) 
+{
+    if (n_len != vector.n_len){
+        throw std::invalid_argument("dimensions not matching for vector subraction");
+    }
+
+    for (int i=0; i<n_len; i++){
+        data[i] -= vector.data[i];
+    }
+    return *this;
+}
+
+
+/**
+ * @brief scalar vector multipliation
+ * 
+ * @return Vector& 
+ */
+Vector& Vector::operator*=(double alpha) 
+{
+    for (int i=0; i<n_len; i++){
+        data[i] *= alpha;
+    }
+    return *this;
+}
+
+
+/**
+ * @brief inner product of two vectors
+ * 
+ * @return double 
+ */
+double Vector::inner_product(const Vector& vector) {
+    if (n_len != vector.n_len){
+        throw std::invalid_argument("dimensions not matching for inner product");
+    }
+
+    double result = 0;
+    for (int i=0; i<n_len; i++){
+        result += data[i]*vector.data[i];
+    }
+    return result;
+}
+
+
+/**
+ * @brief 2_norm of the vector
+ * 
+ * @return double 
+ */
+double Vector::norm2(){
+    return inner_product(*this);
+}
+
+
+/**
+ * @brief get subvector of the current vector
+ * 
+ * @param m 
+ * @param m1 
+ * @return Vector 
+ */
+Vector Vector::slice(int m, int m1){
+    Vector subvector(m);
+    return subvector;
 }
 
 
@@ -387,6 +521,42 @@ Matrix operator*(double alpha, const Matrix& matrix){
 }
 
 
+double inner_product(int n, double* v1, double* v2){
+    double s = 0;
+    for (int i=0; i<n; i++){
+        s += v1[i]*v2[i];
+    }
+    return s;
+}
+
+
+/**
+vector : 1xm
+matrix : mxn
+result : 1xn
+**/
+double* vector_matrix_mul(double* v, Matrix A){
+    double * result = new double[A.n_cols];
+    for (int i=0; i<A.n_cols; i++){
+        result[i] = inner_product(A.m_rows, v, A.get_column(i));
+    }
+    return result;
+}
+
+
+/**
+vector : mxn
+matrix : nx1
+result : mx1
+**/
+double* matrix_vector_mul(Matrix A, double* v){
+    double * result = new double[A.m_rows];
+    for (int i=0; i<A.m_rows; i++){
+        result[i] = inner_product(A.n_cols, A.data[i], v);
+    }
+    return result;
+}
+
 
 Matrix strassen(Matrix A, Matrix B){
     int m = A.m_rows;
@@ -397,16 +567,17 @@ Matrix strassen(Matrix A, Matrix B){
         std::invalid_argument("dimensions not matching for matrix multiplication");
     }
 
-    if (m <= 2 || n <= 2 || p <= 2){
+    if (m <= 1 || n <= 1 || p <= 1){
         // std::cout << "base case of recursion" << std::endl;
         return (A*B);
     }
 
+    // 0. deal with odd dimension
     int m2 = m/2;
     int n2 = n/2;
     int p2 = p/2;
 
-    // assign temp variables
+    Matrix C(m,p);
 
     // get submatrix
     Matrix A11 = A.slice(m2,0,n2,0);
@@ -430,7 +601,6 @@ Matrix strassen(Matrix A, Matrix B){
     Matrix P7 = strassen((A12 - A22), (B21 + B22));
 
     // compse to get result C
-    Matrix C(m,p);
     Matrix C11 = C.slice(m2,0,p2,0);
     Matrix C12 = C.slice(m2,0,p2,p2);
     Matrix C21 = C.slice(m2,m2,p2,0);
@@ -453,5 +623,34 @@ Matrix strassen(Matrix A, Matrix B){
     C22 += P6;
     
 
+    // 5. deal with odd dimensions
+    // TODO: pass C pointer
+    if (m2*2 < m){
+        // A has odd number of rows
+        // fill last row of C
+        C.data[m-1] = vector_matrix_mul(A.data[m-1], B.slice(n,0,2*p2,0));
+    }
+    if (p2*2 < p){
+        double * s2 = matrix_vector_mul(A, B.get_column(p-1));
+        // fill last col of C
+        for (int i=0; i<m; i++){
+            // std::cout << s2[i] << std::endl;
+            C.data[i][p-1] = s2[i];
+        }
+        delete[] s2;
+    }
+    if (n2*2 < n){
+        // n is odd
+        for (int i=0; i<m2*2; i++){
+            for (int j=0; j<p2*2; j++){
+                // add entries to A1 x B1
+                C.data[i][j] += A.data[i][n-1]*B.data[n-1][j];
+            }
+        }
+    }
+
     return C;
 }
+
+
+

@@ -11,14 +11,14 @@
 
 
 int main(){
-    int m = 4;
+    int m = 7;
     int n = 7;
 
-    Matrix matrix1 = Matrix(m, m);
+    Matrix matrix1 = Matrix(m, n);
     matrix1.assign_random();
     matrix1.print();
 
-    Matrix matrix2 = Matrix(m, m);
+    Matrix matrix2 = Matrix(n, m);
     matrix2.assign_random();
     matrix2.print();
 
