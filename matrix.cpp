@@ -41,12 +41,32 @@ m_rows(matrix.m_rows), n_cols(matrix.n_cols)
 /**
  * @brief Construct a new Matrix:: Matrix object
  * data referes to the input refd
- * @param m 
- * @param n 
- * @param data 
+ * @param m number of rows
+ * @param n number of cols
+ * @param data pointer of double array data
  */
 Matrix::Matrix(int m, int n, double** refd) : 
 m_rows(m), n_cols(n), data(refd) {}
+
+
+
+/**
+ * @brief Construct a new Matrix:: Matrix object
+ * matrix is identity matrix
+ * 
+ * @param m number of rows, number of cols
+ */
+Matrix::Matrix(int m) : m_rows(m), n_cols(m)
+{
+    alloc_space();
+    for (int i=0; i<m; i++){
+        for (int j=0; j<m; j++){
+            if (i==j) data[i][j] = 1;
+            else data[i][j] = 0;
+            //data[i][j] = (i==j)? : 1, 0; 
+        }
+    }
+}
 
 
 // ---- destructor ----
@@ -102,7 +122,7 @@ Matrix& Matrix::operator=(const Matrix& matrix)
 
 
 /**
- * @brief Matrix addition: add input matrix into data
+ * @brief Matrix addition
  * 
  * @param matrix 
  * @return Matrix& 
@@ -123,7 +143,7 @@ Matrix& Matrix::operator+=(const Matrix& matrix)
 
 
 /**
- * @brief Matrix subtraction: subtract input matrix from data
+ * @brief Matrix subtraction
  * 
  * @param matrix 
  * @return Matrix& 
@@ -170,7 +190,7 @@ Matrix& Matrix::operator*=(const Matrix& matrix)
 
 
 /**
- * @brief matrix scalar multiplication
+ * @brief Matrix scalar multiplication
  * 
  * @return Matrix& 
  */
@@ -186,7 +206,7 @@ Matrix& Matrix::operator*=(double alpha)
 
 
 /**
- * @brief return a transposed new matrix
+ * @brief Matrix transpose
  * 
  * @return Matrix 
  */
@@ -203,14 +223,14 @@ Matrix Matrix::transpose()
 
 
 /**
- * @brief Get a pointer submatrix = Matrix[m1:m1+m][n1:n1+n]
+ * @brief Create submatrix = Matrix[m1:m1+m][n1:n1+n]
  * excluding row (m1+m) and col (n1+n)
  * 
  * @param m  number of rows
  * @param m1 row starting point
  * @param n  number of cols
  * @param n2 col starting point
- * @return Matrix
+ * @return Matrix with data pointer cooresponds to the parent matrix
  */
 Matrix Matrix::slice(int m, int m1, int n, int n1) 
 {
@@ -230,7 +250,7 @@ Matrix Matrix::slice(int m, int m1, int n, int n1)
 
 
 /**
- * @brief assign random value (0-5) to entries 
+ * @brief assign random value (0-4) to entries 
  * 
  */
 void Matrix::assign_random() 
@@ -243,7 +263,10 @@ void Matrix::assign_random()
 }
 
 
-
+/**
+ * @brief assign zeros to all entries
+ * 
+ */
 void Matrix::assign_zeros(){
     for (int i=0; i<m_rows; i++){
         for (int j=0; j<n_cols; j++){
@@ -270,10 +293,10 @@ void Matrix::print()
 
 
 /**
- * @brief Get the column object
+ * @brief Get jth column of a matrix
  * 
- * @param j 
- * @return double* 
+ * @param j column index
+ * @return double*, pointer of column array
  */
 double* Matrix::get_column(int j){
     double* result = new double[m_rows];
@@ -332,7 +355,7 @@ Matrix operator*(double alpha, const Matrix& matrix){
 }
 
 
-double inner_product(int n, double* v1, double* v2){
+double Matrix::inner_product(int n, double* v1, double* v2){
     double s = 0;
     for (int i=0; i<n; i++){
         s += v1[i]*v2[i];
@@ -342,24 +365,27 @@ double inner_product(int n, double* v1, double* v2){
 
 
 /**
-vector : 1xm
-matrix : mxn
-result : 1xn
-**/
-double* vector_matrix_mul(double* v, Matrix A, double * & v_out){
+ * @brief vector matrix multiplication
+ * 
+ * @param v 1xm vector
+ * @param A mxn matrix
+ * @param v_out 1xn row vector
+ */
+void Matrix::vector_matrix_mul(double* v, Matrix A, double * & v_out){
     for (int i=0; i<A.n_cols; i++){
         v_out[i] = inner_product(A.m_rows, v, A.get_column(i));
     }
-    return v_out;
 }
 
 
 /**
-vector : mxn
-matrix : nx1
-result : mx1
-**/
-double* matrix_vector_mul(Matrix A, double* v){
+ * @brief matrix vector multiplication
+ * 
+ * @param A mxn matrix
+ * @param v nx1 vector
+ * @return double* mx1 col vector
+ */
+double* Matrix::matrix_vector_mul(Matrix A, double* v){
     double * result = new double[A.m_rows];
     for (int i=0; i<A.m_rows; i++){
         result[i] = inner_product(A.n_cols, A.data[i], v);
@@ -371,11 +397,11 @@ double* matrix_vector_mul(Matrix A, double* v){
 /**
  * @brief Strassen algorithm
  * 
- * @param A 
- * @param B 
- * @return Matrix 
+ * @param A mxn matrix
+ * @param B nxp matrix
+ * @return  mxp matrix
  */
-Matrix strassen(Matrix A, Matrix B){
+Matrix Matrix::strassen(Matrix A, Matrix B){
     int m = A.m_rows;
     int n = A.n_cols;
     int p = B.n_cols;
@@ -389,7 +415,7 @@ Matrix strassen(Matrix A, Matrix B){
         return (A*B);
     }
 
-    // 0. deal with odd dimension
+    // 0. prepare
     int m2 = m/2;
     int n2 = n/2;
     int p2 = p/2;
@@ -397,7 +423,7 @@ Matrix strassen(Matrix A, Matrix B){
     Matrix C(m,p);
     C.assign_zeros();
 
-    // get submatrix
+    // 1. get submatrix of A, B
     Matrix A11 = A.slice(m2,0,n2,0);
     Matrix A12 = A.slice(m2,0,n2,n2);
     Matrix A21 = A.slice(m2,m2,n2,0);
@@ -409,7 +435,7 @@ Matrix strassen(Matrix A, Matrix B){
     Matrix B22 = B.slice(n2,n2,p2,p2);
 
 
-    // calculate intermediate result
+    // 2. calculate intermediate result
     Matrix P1 = strassen((A11 + A22),(B11 + B22));
     Matrix P2 = strassen((A21 + A22), B11);
     Matrix P3 = strassen(A11, (B12 - B22));
@@ -418,30 +444,34 @@ Matrix strassen(Matrix A, Matrix B){
     Matrix P6 = strassen((A21 - A11), (B11 + B12));
     Matrix P7 = strassen((A12 - A22), (B21 + B22));
 
-    // compse to get result C
+    // 3. compose intermediate result to get C
     Matrix C11 = C.slice(m2,0,p2,0);
     Matrix C12 = C.slice(m2,0,p2,p2);
     Matrix C21 = C.slice(m2,m2,p2,0);
     Matrix C22 = C.slice(m2,m2,p2,p2);
 
+    // C11
     C11 += P1;
     C11 += P4;
     C11 -= P5;
     C11 += P7;
 
+    // C12
     C12 += P3;
     C12 += P5;
 
+    // C21
     C21 += P2;
     C21 += P4;
 
+    // C22
     C22 += P1;
     C22 += P3;
     C22 -= P2;
     C22 += P6;
     
 
-    // 5. deal with odd dimensions
+    // 4. deal with odd dimensions
     if (m2*2 < m){
         // m is odd
         // fill last row of C
@@ -470,23 +500,4 @@ Matrix strassen(Matrix A, Matrix B){
     }
 
     return C;
-}
-
-
-/**
- * @brief create identity matrix
- * 
- * @param m 
- * @return Matrix 
- */
-Matrix eye(int m) 
-{
-    Matrix result(m,m);
-    for (int i=0; i<m; i++){
-        for (int j=0; j<m; j++){
-            if (i==j) result.data[i][j] = 1;
-            else result.data[i][j] = 0;
-        }
-    }
-    return result;
 }

@@ -12,6 +12,7 @@
 
 int main(){
     int m = 4;
+    // int n = 3;
 
     // Matrix matrix1 = Matrix(m, n);
     // matrix1.assign_random();
@@ -21,20 +22,15 @@ int main(){
     // matrix2.assign_random();
     // matrix2.print();
 
-    // Matrix matrix3 = strassen(matrix1, matrix2);
+    // Matrix matrix3 = Matrix::strassen(matrix1, matrix2);
     // matrix3.print();
 
     // Matrix matrix4 = matrix1 * matrix2;
     // matrix4.print();
 
 
-    Matrix id3(m,m);
-    for (int i=0; i<m; i++){
-        for (int j=0; j<m; j++){
-            if (i==j) id3.data[i][j] = 1;
-            else id3.data[i][j] = 0;
-        }
-    }
+    Matrix id3(m);
+    id3.print();
     Matrix m1 = Matrix(m,m);
     m1.assign_random();
     m1.print();
