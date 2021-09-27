@@ -1,33 +1,3 @@
-class Vector{
-    public:
-        // constructors
-        Vector(int n);
-        Vector(int n, double * refd);
-
-        // destructor
-        ~Vector();
-
-        // standard vector operations
-        Vector& operator=(const Vector&);
-        Vector& operator+=(const Vector&);
-        Vector& operator-=(const Vector&);
-        Vector& operator*=(double alpha);
-
-        // other vector opersations
-        double inner_product(const Vector&);
-        double norm2();
-        Vector slice(int m, int m1);
-
-        // helper function
-        inline double operator()(int i) {return data[i];}
-        void assign_random();
-        void print();
-        void alloc_space();
-        int n_len;
-        double * data;
-};
-
-
 class Matrix{
     public:
         // constructors
@@ -54,9 +24,8 @@ class Matrix{
         // inline int get_n_cols() {return n_cols;}
         inline double operator()(int i, int j) {return data[i][j];}
         void assign_random();
+        void assign_zeros();
         void print();
-        // Vector get_row(int i);
-        // Vector get_column(int j);
         double* get_column(int j);
 
         int m_rows;
@@ -68,24 +37,15 @@ class Matrix{
 
 
 
-
-
-
 // some static methods for Matrix Class
 Matrix operator+(const Matrix&, const Matrix&);
 Matrix operator-(const Matrix&, const Matrix&);
 Matrix operator*(const Matrix&, const Matrix&);
 Matrix operator*(const Matrix&, double);
 Matrix operator*(double, const Matrix&);
-Matrix strassen(Matrix A, Matrix B);
-
-
-// methods for vector and matrix
-Matrix operator*(const Matrix&, const Vector&);
-Matrix operator*(const Vector&, const Matrix&);
-Matrix outer_product(const Vector&, const Vector&);
-
 
 double inner_product(int n, double* v1, double* v2);
 double* vector_matrix_mul(double* v, Matrix A);
 double* matrix_vector_mul(Matrix A, double* v);
+Matrix strassen(Matrix A, Matrix B);
+// Matrix eye(int m);

@@ -18,14 +18,6 @@ Matrix::Matrix(int m, int n) :
 m_rows(m), n_cols(n)
 {
     alloc_space();
-
-    // TODO: this doesn't have to assign 0s
-    for (int i=0; i<m; i++){
-        for (int j=0; j<n; j++){
-            data[i][j] = 0;
-        }
-    }
-
 }
 
 
@@ -164,6 +156,7 @@ Matrix& Matrix::operator*=(const Matrix& matrix)
     }
 
     Matrix result(m_rows, matrix.n_cols);
+    result.assign_zeros();
 
     for (int i=0; i<result.m_rows; i++){
         for (int j=0; j<result.n_cols; j++){
@@ -250,6 +243,16 @@ void Matrix::assign_random()
 }
 
 
+
+void Matrix::assign_zeros(){
+    for (int i=0; i<m_rows; i++){
+        for (int j=0; j<n_cols; j++){
+            data[i][j] = 0;
+        }
+    }
+}
+
+
 /**
  * @brief print out matrix data
  * 
@@ -291,198 +294,6 @@ void Matrix::alloc_space()
     for (int i=0; i < m_rows; i++){
         data[i] = new double[n_cols];
     }
-}
-
-
-
-// ---- implemenation of class Vector  ----
-
-/**
- * @brief Construct a new Vector:: Vector object
- * 
- * @param n 
- */
-Vector::Vector(int n) : n_len(n)
-{
-    alloc_space();
-    for (int i=0; i<n; i++){
-        data[i] = 0;
-    }
-}
-
-
-/**
- * @brief Construct a new Vector:: Vector object
- * 
- * @param n 
- * @param refd 
- */
-Vector::Vector(int n, double * refd) : 
-n_len(n), data(refd)
-{}
-
-
-/**
- * @brief Destroy the Vector:: Vector object
- * 
- */
-Vector::~Vector() 
-{
-    delete[] data;
-}
-
-
-/**
- * @brief 
- * 
- * @param vector 
- * @return Vector& 
- */
-Vector& Vector::operator=(const Vector& vector) 
-{
-    if (this == &vector){
-        return *this;
-    }
-
-    // if dimension different, destroy original data
-    if (n_len != vector.n_len){
-        delete [] data;
-        n_len = vector.n_len;
-        alloc_space();
-    }
-
-    // copy data
-    for (int i=0; i<n_len; i++){
-        data[i] = vector.data[i];
-    }
-
-    return *this;
-}
-
-
-/**
- * @brief Vector addition
- * 
- * @return Vector& 
- */
-Vector& Vector::operator+=(const Vector& vector) 
-{
-    if (n_len != vector.n_len){
-        throw std::invalid_argument("dimensions not matching for vector addition");
-    }
-
-    for (int i=0; i<n_len; i++){
-        data[i] += vector.data[i];
-    }
-    return *this;
-}
-
-
-/**
- * @brief Vector subtraction
- * 
- * @return Vector& 
- */
-Vector& Vector::operator-=(const Vector& vector) 
-{
-    if (n_len != vector.n_len){
-        throw std::invalid_argument("dimensions not matching for vector subraction");
-    }
-
-    for (int i=0; i<n_len; i++){
-        data[i] -= vector.data[i];
-    }
-    return *this;
-}
-
-
-/**
- * @brief scalar vector multipliation
- * 
- * @return Vector& 
- */
-Vector& Vector::operator*=(double alpha) 
-{
-    for (int i=0; i<n_len; i++){
-        data[i] *= alpha;
-    }
-    return *this;
-}
-
-
-/**
- * @brief inner product of two vectors
- * 
- * @return double 
- */
-double Vector::inner_product(const Vector& vector) {
-    if (n_len != vector.n_len){
-        throw std::invalid_argument("dimensions not matching for inner product");
-    }
-
-    double result = 0;
-    for (int i=0; i<n_len; i++){
-        result += data[i]*vector.data[i];
-    }
-    return result;
-}
-
-
-/**
- * @brief 2_norm of the vector
- * 
- * @return double 
- */
-double Vector::norm2(){
-    return inner_product(*this);
-}
-
-
-/**
- * @brief get subvector of the current vector
- * 
- * @param m 
- * @param m1 
- * @return Vector 
- */
-Vector Vector::slice(int m, int m1){
-    Vector subvector(m);
-    return subvector;
-}
-
-
-/**
- * @brief assign random value to the vector
- * 
- */
-void Vector::assign_random() 
-{
-    for (int i=0; i<n_len; i++){
-        data[i] = (i+1);
-    }
-}
-
-
-/**
- * @brief print out the vector horizontally
- * 
- */
-void Vector::print() 
-{
-    for (int i=0; i<n_len; i++){
-       std::cout << data[i] << " ";
-    }
-    std::cout << std::endl;
-}
-
-
-/**
- * @brief allocate data space to the pointer
- * 
- */
-void Vector::alloc_space() 
-{
-    data = new double[n_len];
 }
 
 
@@ -584,6 +395,7 @@ Matrix strassen(Matrix A, Matrix B){
     int p2 = p/2;
 
     Matrix C(m,p);
+    C.assign_zeros();
 
     // get submatrix
     Matrix A11 = A.slice(m2,0,n2,0);
@@ -661,4 +473,20 @@ Matrix strassen(Matrix A, Matrix B){
 }
 
 
-
+/**
+ * @brief create identity matrix
+ * 
+ * @param m 
+ * @return Matrix 
+ */
+Matrix eye(int m) 
+{
+    Matrix result(m,m);
+    for (int i=0; i<m; i++){
+        for (int j=0; j<m; j++){
+            if (i==j) result.data[i][j] = 1;
+            else result.data[i][j] = 0;
+        }
+    }
+    return result;
+}

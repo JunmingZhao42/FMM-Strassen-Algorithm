@@ -21,3 +21,4 @@ NICHOLAS J. HIGHAM. _Exploiting Fast Matrix Multiplication_
 5. ~~optimise code memory allocation and complexity with pointers~~ (done)
 6. create testing for correctness
 7. create testing for timing
+8. change matrix constructor (do not assign 0s)
