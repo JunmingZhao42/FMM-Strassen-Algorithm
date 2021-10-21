@@ -5,7 +5,7 @@
  * blas_routine.cpp - implementation of BLAS3 operation (a) and (d)
 **/
 
-#include "matrix.hpp"
+#include "matrix.cpp"
 #include <stdexcept>
 
 

@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <thread>
+#include <future>
 
 
 // ---- class functions implementation ----
@@ -410,7 +412,7 @@ Matrix Matrix::strassen(Matrix A, Matrix B){
         std::invalid_argument("dimensions not matching for matrix multiplication");
     }
 
-    if (m <= 1 || n <= 1 || p <= 1){
+    if (m <= 100 || n <= 100 || p <= 100){
         // std::cout << "base case of recursion" << std::endl;
         return (A*B);
     }
