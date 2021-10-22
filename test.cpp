@@ -12,6 +12,7 @@
 
 
 int main(){
+    std::cout << "matrix dimension," << "Strassen," << "Standard" << std::endl;
 
     for (int m=100; m < 500; m+=10){
         std::cout << m << ",";

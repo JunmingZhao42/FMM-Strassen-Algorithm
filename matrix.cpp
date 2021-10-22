@@ -438,13 +438,29 @@ Matrix Matrix::strassen(Matrix A, Matrix B){
 
 
     // 2. calculate intermediate result
-    Matrix P1 = strassen((A11 + A22),(B11 + B22));
-    Matrix P2 = strassen((A21 + A22), B11);
-    Matrix P3 = strassen(A11, (B12 - B22));
-    Matrix P4 = strassen(A22, (B21 - B11));
-    Matrix P5 = strassen((A11 + A12), B22);
-    Matrix P6 = strassen((A21 - A11), (B11 + B12));
-    Matrix P7 = strassen((A12 - A22), (B21 + B22));
+    auto f1 = std::async(strassen, (A11 + A22), (B11 + B22));
+    auto f2 = std::async(strassen, (A21 + A22),  B11);
+    auto f3 = std::async(strassen,  A11,        (B12 - B22));
+    auto f4 = std::async(strassen,  A22,        (B21 - B11));
+    auto f5 = std::async(strassen, (A11 + A12),  B22);
+    auto f6 = std::async(strassen, (A21 - A11), (B11 + B12));
+    auto f7 = std::async(strassen, (A12 - A22), (B21 + B22));
+
+    f1.wait();
+    f2.wait();
+    f3.wait();
+    f4.wait();
+    f5.wait();
+    f6.wait();
+    f7.wait();
+    
+    Matrix P1 = f1.get();
+    Matrix P2 = f2.get();
+    Matrix P3 = f3.get();
+    Matrix P4 = f4.get();
+    Matrix P5 = f5.get();
+    Matrix P6 = f6.get();
+    Matrix P7 = f7.get();
 
     // 3. compose intermediate result to get C
     Matrix C11 = C.slice(m2,0,p2,0);
