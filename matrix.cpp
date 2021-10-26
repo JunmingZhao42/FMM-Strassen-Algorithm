@@ -65,7 +65,6 @@ Matrix::Matrix(int m) : m_rows(m), n_cols(m)
         for (int j=0; j<m; j++){
             if (i==j) data[i][j] = 1;
             else data[i][j] = 0;
-            //data[i][j] = (i==j)? : 1, 0; 
         }
     }
 }
@@ -429,8 +428,7 @@ Matrix Matrix::strassen(Matrix A, Matrix B){
     }
 
     // the cutting threshold
-    if (m <= 2 || n <= 2 || p <= 2){
-        // std::cout << "base case of recursion" << std::endl;
+    if (m <= 100 || n <= 100 || p <= 100){
         return (A*B);
     }
 

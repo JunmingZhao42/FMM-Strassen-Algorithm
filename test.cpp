@@ -105,8 +105,8 @@ int main(){
             std::cout << m << ",";
             // create matrix T
             Matrix T = Matrix(m);
-            // T.assign_triangular();
-            T.assign_random();
+            T.assign_triangular();
+            
             // create matrix B
             Matrix B = Matrix(m);
             B.assign_random();
