@@ -1,24 +1,36 @@
-# BLAS3 (a) (b)
+This is a one-semester project about implementing Strassen's algorithm in `C++` and exploiting it in BLAS3-A and BLAS3-D specificaiton.
 
-This is a one-semester project about the BLAS3 (basic linear algebra subroutine level 3) operation (a) and (d).
-The project focus on implementing and analysing the behaviour of operation (A) and operation (B) of BLAS3.
+--------
+## Code structure
+`test.cpp` includes three sets of test.
+Set 1. Matrix multiplication AxB
+Set 2. BLAS3-A routine using Strassen's algorithm
+Set 3. BLAS3-D routine using Strassen's algorithm
+Test will record the timing and generate `csv` file.
 
-## (a)
-1. Multiplication is done using Strassen algorithm
-2. To handle odd dimension matrix, chopping method is used according to R. P. BRENT, _Algorithms for Matrix Multiplication_
+`plot.ipynb` provides visualisation from `csv` file.
 
+## How to run
+1. Compile
+```
+g++ test.cpp -std=c++11 -pthread -o test
+```
+2. Run
+```
+./test > result.csv
+```
 
+## References
+Higham, N.J. (1990). Exploiting fast matrix multiplication within the level 3 BLAS. _ACM Transactions on Mathematical Software_, 16(4), pp.352–368.
 
-Reference for the algorithm:
-NICHOLAS J. HIGHAM. _Exploiting Fast Matrix Multiplication_
+Strassen, V. (1969). Gaussian elimination is not optimal. _Numerische Mathematik_, 13(4), pp.354–356.
 
+Brent, R. (1970). _Algorithms for matrix multiplication_, Technical Report TR-CS-70-157, DCS, Stanford, 3+52 pp.
 
-# TODO:
-1. ~~structure the code with headers and proper comments~~ tidy up code comments
-2. implement BLAS3D
-3. ~~implement error handling~~ (done)
-4. ~~generalise matrix entry type~~ (discard)
-5. ~~optimise code memory allocation and complexity with pointers~~ (done)
-6. create testing for correctness
-7. create testing for timing
-8. change matrix constructor (do not assign 0s)
+--------
+
+**MATH3512 Matrix Computations** semester project
+- Supervisor: Assoc Prof. Linda Stals
+- Author: Junming Zhao
+- The Australian National Unviersity
+- Department of Mathematics
