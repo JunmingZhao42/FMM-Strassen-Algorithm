@@ -265,6 +265,22 @@ void Matrix::assign_random()
 }
 
 
+
+/**
+ * @brief assign a triangular matrix
+ * 
+ */
+void Matrix::assign_triangular() 
+{
+    for (int i=0; i<m_rows; i++){
+        for (int j=i; j<n_cols; j++){
+            data[i][j] = (i+1)*(j+1);
+        }
+    }
+}
+
+
+
 /**
  * @brief assign zeros to all entries
  * 
@@ -412,7 +428,8 @@ Matrix Matrix::strassen(Matrix A, Matrix B){
         std::invalid_argument("dimensions not matching for matrix multiplication");
     }
 
-    if (m <= 100 || n <= 100 || p <= 100){
+    // the cutting threshold
+    if (m <= 2 || n <= 2 || p <= 2){
         // std::cout << "base case of recursion" << std::endl;
         return (A*B);
     }

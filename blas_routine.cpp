@@ -47,9 +47,10 @@ void BLAS_3A(double alpha, double beta,
  * @param alpha 
  * @param T mxm upper triangular matrix
  * @param B mxp matrix
+ * @param s whether to use Strassen's algorithm
  * @return Matrix mxp matrix
  */
-Matrix BLAS_3D(double alpha, Matrix T, Matrix B){
+Matrix BLAS_3D(double alpha, Matrix T, Matrix B, bool s){
     int m = T.get_rows();
     int p = B.get_cols();
 
@@ -85,10 +86,17 @@ Matrix BLAS_3D(double alpha, Matrix T, Matrix B){
     Matrix C21 = C.slice(m2,m2,p2,0);
     Matrix C22 = C.slice(m2,m2,p2,p2);
 
-    C21 += BLAS_3D(1, T22, B21);
-    C22 += BLAS_3D(1, T22, B22);
-    C11 += BLAS_3D(1, T11, (B11 - Matrix::strassen(T12, C21)));
-    C12 += BLAS_3D(1, T11, (B12 - Matrix::strassen(T12, C22)));
+    C21 += BLAS_3D(1, T22, B21, s);
+    C22 += BLAS_3D(1, T22, B22, s);
+
+    if (s) {
+        C11 += BLAS_3D(1, T11, (B11 - Matrix::strassen(T12, C21)), s);
+        C12 += BLAS_3D(1, T11, (B12 - Matrix::strassen(T12, C22)), s);
+    }
+    else {
+        C11 += BLAS_3D(1, T11, (B11 - T12*C21), s);
+        C12 += BLAS_3D(1, T11, (B12 - T12*C22), s);
+    }
 
     return C;
 }

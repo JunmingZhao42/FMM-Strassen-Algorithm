@@ -10,6 +10,7 @@
 // #include "matrix.cpp"
 #include <iostream>
 #include <chrono>
+#include <math.h>
 
 
 const int REPEAT = 5;
@@ -18,37 +19,43 @@ const int STEP = 10;
 
 
 int main(){
-    // // test for Strassen algorithm
-    // std::cout << "matrix dimension," << "Strassen," << "Standard" << std::endl;
-    // for (int m=0; m<SIZE; m+=STEP){
-    //     for (int i=0; i<REPEAT; i++){
-    //         std::cout << m << ",";
-    //         // create matrix A
-    //         Matrix A = Matrix(m);
-    //         A.assign_random();
+    // test for Strassen algorithm
+    // test 4.1 in report
+    /*
+    std::cout << "matrix dimension," << "Strassen," << "Standard" << std::endl;
 
-    //         // create matrix B
-    //         Matrix B = Matrix(m);
-    //         B.assign_random();
+    for (int m=0; m<SIZE; m+=STEP){
+        for (int i=0; i<REPEAT; i++){
+            std::cout << m << ",";
+            // create matrix A
+            Matrix A = Matrix(m);
+            A.assign_random();
 
-    //         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    //         // C = A*B
-    //         Matrix C = Matrix::strassen(A,B);
-    //         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+            // create matrix B
+            Matrix B = Matrix(m);
+            B.assign_random();
 
-    //         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << ",";
+            std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+            // C = A*B
+            Matrix C = Matrix::strassen(A,B);
+            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    //         // standard matrix multiplication
-    //         begin = std::chrono::steady_clock::now();
-    //         C = A*B;
-    //         end = std::chrono::steady_clock::now();
+            std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << ",";
 
-    //         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    //     }
-    // }
+            // standard matrix multiplication
+            begin = std::chrono::steady_clock::now();
+            C = A*B;
+            end = std::chrono::steady_clock::now();
+
+            std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        }
+    }
+    */
     
 
     // test for BLAS3-A routine
+    // test 4.2 in report
+    /*
     std::cout << "matrix dimension," << "Strassen," << "Standard" << std::endl;
     
     for (int m=0; m < SIZE; m+=STEP){
@@ -83,6 +90,44 @@ int main(){
             std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
         }
     }
+    */
+
+
+    // test for BLAS3-D routine
+    // test 4.3 in report
+    
+    std::cout << "matrix dimension," << "Strassen," << "Standard" << std::endl;
+    
+    for (int n=1; n < 16; n+=1){
+        for (int i=0; i<REPEAT; i++){
+            int m = pow(2, n);
+
+            std::cout << m << ",";
+            // create matrix T
+            Matrix T = Matrix(m);
+            // T.assign_triangular();
+            T.assign_random();
+            // create matrix B
+            Matrix B = Matrix(m);
+            B.assign_random();
+
+            std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+            // C = 2.0*T^-1*B
+            BLAS_3D(2.0, T, B, true);
+            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+            std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << ",";
+
+            // standard matrix multiplication
+            begin = std::chrono::steady_clock::now();
+            // C = 2.0*T^-1*B
+            BLAS_3D(2.0, T, B, false);
+            end = std::chrono::steady_clock::now();
+
+            std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        }
+    }
+    
 
     return 0;
 }

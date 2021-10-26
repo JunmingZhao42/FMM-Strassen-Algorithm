@@ -26,6 +26,7 @@ class Matrix{
         inline double operator()(int i, int j) {return data[i][j];}
 
         void assign_random();
+        void assign_triangular();
         void assign_zeros();
         void print();
         double* get_column(int j);
